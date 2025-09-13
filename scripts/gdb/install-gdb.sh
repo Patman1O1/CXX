@@ -12,13 +12,13 @@ if command -v gdb >/dev/null 2>&1; then
 fi
 
 # Attempt to install GDB
-if command -v apt >/dev/null 2>&1; then # Ubuntu
+if command -v apt >/dev/null 2>&1; then # Ubuntu/Debian
 	sudo apt install -y gdb;
 elif command -v pkg >/dev/null 2>&1; then # Termux
 	pkg install -y gdb;
-elif command -v yum >/dev/null 2>&1; then
+elif command -v yum >/dev/null 2>&1; then # RHEL/CentOS/Fedora
 	sudo yum install -y gdb;
-elif command -v pacman >/dev/null 2>&1; then
+elif command -v pacman >/dev/null 2>&1; then # Arch
 	sudo pacman -S --noconfirm gdb;
 elif command -v brew >/dev/null 2>&1; then # macOS
 	brew install gdb;

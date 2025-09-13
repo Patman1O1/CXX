@@ -12,13 +12,13 @@ if command -v g++ >/dev/null 2>&1; then
 fi
 
 # Attempt to install g++
-if command -v apt >/dev/null 2>&1; then # Ubuntu
+if command -v apt >/dev/null 2>&1; then # Ubuntu/Debian
 	sudo apt update && sudo apt install -y g++;
 elif command -v pkg >/dev/null 2>&1; then # Termux
 	pkg install -y clang;
-elif command -v yum >/dev/null 2>&1; then
+elif command -v yum >/dev/null 2>&1; then # RHEL/CentOS/Fedora
 	sudo yum install -y gcc-c++;
-elif command -v pacman >/dev/null 2>&1; then
+elif command -v pacman >/dev/null 2>&1; then # Arch
 	sudo pacman -Sy --noconfirm gcc;
 elif command -v brew >/dev/null 2>&1; then # macOS
 	brew install gcc;

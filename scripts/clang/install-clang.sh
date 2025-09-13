@@ -12,13 +12,13 @@ if command -v clangd >/dev/null 2>&1; then
 fi
 
 # Attempt to install clang
-if command -v apt >/dev/null 2>&1; then # Ubuntu
+if command -v apt >/dev/null 2>&1; then # Ubuntu/Debian
 	sudo apt install -y clangd;
 elif command -v pkg >/dev/null 2>&1; then # Termux
 	pkg install -y clangd;
-elif command -v yum >/dev/null 2>&1; then
+elif command -v yum >/dev/null 2>&1; then # RHEL/CentOS/Fedora
 	sudo yum install -y clang-tools-extra;
-elif command -v pacman >/dev/null 2>&1; then
+elif command -v pacman >/dev/null 2>&1; then # Arch
 	sudo pacman -S --noconfirm clang;
 elif command -v brew >/dev/null 2>&1; then # macOS
 	brew install llvm;
