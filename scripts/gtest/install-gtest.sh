@@ -20,3 +20,14 @@ if command -v ls $PREFIX/lib/libgtest* >/dev/null 2>&1 && \
 	exit 0;
 fi
 
+# If the current Unix version is Termux
+if command -v pkg >/dev/null 2>&1; then
+	# Install build essentials
+	pkg install clang cmake make git ninja
+
+	# Install additional tools
+	pkg install python which
+
+	
+	exit 0;
+fi
