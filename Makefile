@@ -103,7 +103,14 @@ install-all: install-g++ install-clang install-gdb install-valgrind install-cmak
 # Uninstall All
 # ===============================
 uninstall-all: uninstall-g++ uninstall-clang uninstall-gdb uninstall-valgrind uninstall-cmake uninstall-git uninstall-gtest
-	
+
+
+# ===============================
+# Chmod all
+# ===============================
+chmod-all:
+	chmod $(ARG) ./scripts/chmod-all.sh && ./scripts/chmod-all.sh $(ARG)
+
 
 # ===============================
 # Upgrade
