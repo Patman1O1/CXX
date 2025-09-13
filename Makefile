@@ -10,8 +10,6 @@
 		uninstall-cmake \
 		install-git \
 		uninstall-git \
-		install-gtest \
-		uninstall-gtest \
 		install-all \
 		uninstall-all
 
@@ -82,27 +80,14 @@ uninstall-cmake:
 
 
 # ===============================
-# Install gtest
-# ===============================
-install-gtest:
-	./scripts/gtest/install-gtest.sh
-
-# ===============================
-# Uninstall gtest
-# ===============================
-uninstall-gtest:
-	./scripts/gtest/uninstall-gtest.sh
-
-
-# ===============================
 # Install All
 # ===============================
-install-all: install-g++ install-clang install-gdb install-valgrind install-cmake install-git install-gtest
+install-all: install-g++ install-clang install-gdb install-valgrind install-cmake install-git
 
 # ===============================
 # Uninstall All
 # ===============================
-uninstall-all: uninstall-g++ uninstall-clang uninstall-gdb uninstall-valgrind uninstall-cmake uninstall-git uninstall-gtest
+uninstall-all: uninstall-g++ uninstall-clang uninstall-gdb uninstall-valgrind uninstall-cmake uninstall-git
 
 
 # ===============================
