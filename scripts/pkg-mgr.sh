@@ -186,4 +186,3 @@ case "$DISTRO:$ACTION" in
 esac
 
 echo "✅ Successfully completed $ACTION ${PKGS:+for: $PKGS}"
-
