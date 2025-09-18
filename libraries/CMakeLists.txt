@@ -1,15 +1,138 @@
-cmake_minimum_required(VERSION 4.0)
-project(Libraries)
+cmake_minimum_required(VERSION 3.15...4.0)
+project(Libraries LANGUAGES CXX)
 
-# Library name and type
-set(LIBRARY_NAME "" CACHE STRING "LIBRARY_NAME")
 
-# Fail the configuration process if the user does not specify a library name
-if(NOT LIBRARY_NAME)
-    message(FATAL_ERROR "-LIBRARY_NAME was not specified")
+# Variables
+set(LIBRARY_NAME "" CACHE STRING "LIBRARY_NAME") # Required
+set(LIBRARY_NAME_UPPER "${LIBRARY_NAME}" CACHE STRING "LIBRARY_NAME_UPPER")
+set(LIBRARY_NAME_LOWER "${LIBRARY_NAME}" CACHE STRING "LIBRARY_NAME_LOWER")
+set(LIBRARY_TYPE "" CACHE STRING "LIBRARY_TYPE \"\^(INTERFACE|STATIC|SHARED|MODULE)\$\"") # Required
+set(LIBRARY_DESCRIPTION "\"\"" CACHE STRING "LIBRARY_DESCRIPTION")
+set(LIBRARY_VERSION 1.0.0)
+set(CMAKE_VERSION 3.15...4.0)
+set(CMAKE_CXX_STANDARD 23)
+
+# Variable Formatting
+string(TOUPPER "${LIBRARY_NAME_UPPER}" LIBRARY_NAME_UPPER)
+string(TOLOWER "${LIBRARY_NAME_LOWER}" LIBRARY_NAME_LOWER)
+string(TOUPPER "${LIBRARY_TYPE}" LIBRARY_TYPE)
+
+
+# Make sure required arguments were specified
+if (NOT LIBRARY_NAME)
+    message(FATAL_ERROR "-DLIBRARY_NAME was not specified")
 endif()
 
-# Library directory
-set(LIBRARY_DIR "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}")
+if (NOT LIBRARY_TYPE MATCHES "^(INTERFACE|STATIC|SHARED|MODULE)$")
+    message(FATAL_ERROR "-DLIBRARY_TYPE was not specified as INTERFACE, STATIC, SHARED, or MODULE")
+endif()
 
-# L
+
+# Configure ${LIBRARY_NAME}/main
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/main/config_main.cpp.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/main/${LIBRARY_NAME}_main.cpp"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/main/CMakeLists.txt.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/main/CMakeLists.txt"
+        @ONLY
+)
+
+# Configure ${LIBRARY_NAME}/cmake
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/cmake/config-config.cmake.in.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/cmake/${LIBRARY_NAME}-config.cmake.in"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/cmake/silent_copy.cmake.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/cmake/silent_copy.cmake"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/cmake/utils.cmake.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/cmake/utils.cmake"
+        @ONLY
+)
+
+
+# Configure ${LIBRARY_NAME}/include/${LIBRARY_NAME}
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/include/config/config.hpp.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/include/${LIBRARY_NAME}/${LIBRARY_NAME}.hpp"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/include/config/export.hpp.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/include/${LIBRARY_NAME}/export.hpp"
+        @ONLY
+)
+
+
+# Configure ${LIBRARY_NAME}/src (if ${LIBRARY_TYPE} is NOT INTERFACE)
+if(NOT LIBRARY_TYPE MATCHES "INTERFACE")
+    configure_file(
+            "${PROJECT_SOURCE_DIR}/config-files/build/src/config.cpp.in"
+            "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/src/${LIBRARY_NAME}.cpp"
+            @ONLY
+    )
+
+    configure_file(
+            "${PROJECT_SOURCE_DIR}/config-files/build/src/CMakeLists.txt.in"
+            "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/src/CMakeLists.txt"
+            @ONLY
+    )
+endif()
+
+
+# Configure ${LIBRARY_NAME}/tests
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/tests/config_tests.cpp.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/tests/${LIBRARY_NAME}_tests.cpp"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/tests/CMakeLists.txt.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/tests/CMakeLists.txt"
+        @ONLY
+)
+
+# Configure ${LIBRARY_NAME}
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/.clang-format.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/.clang-format"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/.gitignore.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/.gitignore"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/CMakeLists.txt.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/CMakeLists.txt"
+        @ONLY
+)
+
+configure_file(
+        "${PROJECT_SOURCE_DIR}/config-files/build/CMakePresets.json.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/CMakePresets.json"
+        @ONLY
+)
+
+# Commands (these comments are temporary until the library builder is complete
+# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=INTERFACE
+# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=STATIC
+# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=SHARED
+# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=INTERFACE
+# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=STATIC
+# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=SHARED
