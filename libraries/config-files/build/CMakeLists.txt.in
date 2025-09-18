@@ -1,0 +1,175 @@
+#----------------------------------------------------------------------------------------------------------------------
+# Information
+#----------------------------------------------------------------------------------------------------------------------
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+project(@LIBRARY_NAME@
+        VERSION @LIBRARY_VERSION@
+        DESCRIPTION @LIBRARY_DESCRIPTION@
+        LANGUAGES CXX)
+
+
+#----------------------------------------------------------------------------------------------------------------------
+# Settings and Options
+#----------------------------------------------------------------------------------------------------------------------
+set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+
+include(cmake/utils.cmake)
+include(GNUInstallDirs)
+
+string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" is_top_level)
+
+# @LIBRARY_NAME_UPPER@_SHARED_LIBS option (undefined by default) can be used to force shared/static build
+option(@LIBRARY_NAME_UPPER@_BUILD_TESTS "Build @LIBRARY_NAME@ tests" ON)
+option(@LIBRARY_NAME_UPPER@_BUILD_MAIN "Build @LIBRARY_NAME@ main" ON)
+option(@LIBRARY_NAME_UPPER@_BUILD_DOCS "Build @LIBRARY_NAME@ documentation" OFF)
+option(@LIBRARY_NAME_UPPER@_INSTALL "Generate target for installing @LIBRARY_NAME@" ${is_top_level})
+set_if_undefined(@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/@LIBRARY_NAME@" CACHE STRING
+    "Install path for @LIBRARY_NAME@ package-related CMake files")
+
+if(NOT DEFINED CMAKE_BUILD_TYPE AND NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
+
+#----------------------------------------------------------------------------------------------------------------------
+# Targets
+#----------------------------------------------------------------------------------------------------------------------
+include(CMakePackageConfigHelpers)
+
+add_library(@LIBRARY_NAME@ @LIBRARY_TYPE@) # initialized below
+add_library(@LIBRARY_NAME@::@LIBRARY_NAME@ ALIAS @LIBRARY_NAME@)
+
+if(NOT @LIBRARY_TYPE@ STREQUAL "INTERFACE")
+    set(SOURCES
+            include/@LIBRARY_NAME@/export.hpp
+            include/@LIBRARY_NAME@/@LIBRARY_NAME@.hpp
+            src/@LIBRARY_NAME@.cpp)
+
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
+
+    target_sources(@LIBRARY_NAME@ PRIVATE ${SOURCES})
+
+   target_compile_definitions(@LIBRARY_NAME@
+        PUBLIC
+            "$<$<STREQUAL:@LIBRARY_TYPE@, STATIC>:@LIBRARY_NAME_UPPER@_STATIC_DEFINE>")
+
+    target_include_directories(@LIBRARY_NAME@
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+else()
+    set(SOURCES
+            include/@LIBRARY_NAME@/export.hpp
+            include/@LIBRARY_NAME@/@LIBRARY_NAME@.hpp)
+
+    source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
+
+    target_sources(@LIBRARY_NAME@
+        PRIVATE
+            include/@LIBRARY_NAME@/@LIBRARY_NAME@.hpp)
+
+    target_include_directories(@LIBRARY_NAME@
+        INTERFACE
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+            "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+endif()
+
+set_target_properties(@LIBRARY_NAME@ PROPERTIES
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    VERSION ${PROJECT_VERSION})
+
+if(@LIBRARY_NAME_UPPER@_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+    add_test(NAME @LIBRARY_NAME@_tests COMMAND @LIBRARY_NAME@_tests)
+endif()
+
+if(@LIBRARY_NAME_UPPER@_BUILD_MAIN)
+    add_subdirectory(main)
+endif()
+
+if(@LIBRARY_NAME_UPPER@_BUILD_DOCS)
+    find_package(Doxygen REQUIRED)
+    doxygen_add_docs(docs include)
+endif()
+
+if(NOT @LIBRARY_TYPE@ STREQUAL "INTERFACE")
+    include(GenerateExportHeader)
+    set(export_file_name "export_shared.hpp")
+
+    if(NOT @LIBRARY_TYPE@ STREQUAL "SHARED")
+        set(export_file_name "export_static.hpp")
+    endif()
+
+    generate_export_header(@LIBRARY_NAME@ EXPORT_FILE_NAME include/@LIBRARY_NAME@/${export_file_name})
+endif()
+
+if(@LIBRARY_NAME_UPPER@_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
+    configure_package_config_file(cmake/mylib-config.cmake.in @LIBRARY_NAME@-config.cmake
+            INSTALL_DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}")
+
+    write_basic_package_version_file(@LIBRARY_NAME@-config-version.cmake
+        COMPATIBILITY SameMajorVersion)
+
+    install(TARGETS @LIBRARY_NAME@ EXPORT @LIBRARY_NAME@-export
+        RUNTIME COMPONENT @LIBRARY_NAME@
+        LIBRARY COMPONENT @LIBRARY_NAME@ NAMELINK_COMPONENT @LIBRARY_NAME@-dev
+        ARCHIVE COMPONENT @LIBRARY_NAME@-dev
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+    install(DIRECTORY include/
+        TYPE INCLUDE
+        COMPONENT @LIBRARY_NAME@-dev)
+    install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/@LIBRARY_NAME@/${export_file_name}"
+        COMPONENT @LIBRARY_NAME@-dev
+        DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/@LIBRARY_NAME@")
+
+    set(targets_file "@LIBRARY_NAME@-shared-targets.cmake")
+
+    if(NOT BUILD_SHARED_LIBS)
+        set(targets_file "@LIBRARY_NAME@-static-targets.cmake")
+    endif()
+
+    install(EXPORT @LIBRARY_NAME@-export
+        COMPONENT @LIBRARY_NAME@-dev
+        FILE "${targets_file}"
+        DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}"
+        NAMESPACE @LIBRARY_NAME@::)
+
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/@LIBRARY_NAME@-config-version.cmake"
+        COMPONENT @LIBRARY_NAME@-dev
+        DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}")
+
+    if(MSVC)
+        set(pdb_file "")
+        set(pdb_file_destination "")
+
+        if(BUILD_SHARED_LIBS)
+            set(pdb_file "$<TARGET_PDB_FILE:@LIBRARY_NAME@>")
+            set(pdb_file_destination "${CMAKE_INSTALL_BINDIR}")
+        else()
+            # TARGET_PDB_FILE does not work for pdb file generated for static library build, determining it manually
+            set(pdb_file "$<TARGET_FILE_DIR:@LIBRARY_NAME@>/$<TARGET_FILE_PREFIX:@LIBRARY_NAME@>$<TARGET_FILE_BASE_NAME:@LIBRARY_NAME@>.pdb")
+            set(pdb_file_destination "${CMAKE_INSTALL_LIBDIR}")
+        endif()
+
+        install(FILES "${pdb_file}"
+            COMPONENT @LIBRARY_NAME@-dev
+            CONFIGURATIONS Debug RelWithDebInfo
+            DESTINATION "${pdb_file_destination}"
+            OPTIONAL)
+    endif()
+endif()
+
+
+#----------------------------------------------------------------------------------------------------------------------
+# Dependencies
+#----------------------------------------------------------------------------------------------------------------------
+
+# Search for your dependencies here
+
+
