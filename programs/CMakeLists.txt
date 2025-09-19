@@ -28,12 +28,6 @@ configure_file(
         @ONLY
 )
 
-configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/src/CMakeLists.txt.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/src/CMakeLists.txt"
-        @ONLY
-)
-
 
 # Configure ${PROGRAM_NAME}
 configure_file(
@@ -58,8 +52,3 @@ configure_file(
         "${PROJECT_SOURCE_DIR}/config-files/build/CMakePresets.json.in"
         "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/CMakePresets.json"
         @ONLY)
-
-
-# Commands (these comments are temporary until the program builder is complete
-# cmake -B build -DPROGRAM_NAME=mypro
-# rm -r build && cmake -B build -DPROGRAM_NAME=mypro
