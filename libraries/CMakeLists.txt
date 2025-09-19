@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.15...4.0)
 project(Libraries LANGUAGES CXX)
 
-
 # Variables
 set(LIBRARY_NAME "" CACHE STRING "LIBRARY_NAME") # Required
 set(LIBRARY_NAME_UPPER "${LIBRARY_NAME}" CACHE STRING "LIBRARY_NAME_UPPER")
@@ -128,11 +127,3 @@ configure_file(
         "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/CMakePresets.json"
         @ONLY
 )
-
-# Commands (these comments are temporary until the library builder is complete
-# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=INTERFACE
-# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=STATIC
-# cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=SHARED
-# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=INTERFACE
-# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=STATIC
-# rm -r build && cmake -B build -DLIBRARY_NAME=mylib -DLIBRARY_TYPE=SHARED
