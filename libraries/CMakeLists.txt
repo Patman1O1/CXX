@@ -29,8 +29,8 @@ endif()
 
 # Configure ${LIBRARY_NAME}/main
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/main/config_main.cpp.in"
-        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/main/${LIBRARY_NAME}_main.cpp"
+        "${PROJECT_SOURCE_DIR}/config-files/build/main/main.cpp.in"
+        "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/main/main.cpp"
         @ONLY
 )
 
@@ -79,12 +79,6 @@ if(NOT LIBRARY_TYPE MATCHES "INTERFACE")
     configure_file(
             "${PROJECT_SOURCE_DIR}/config-files/build/src/config.cpp.in"
             "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/src/${LIBRARY_NAME}.cpp"
-            @ONLY
-    )
-
-    configure_file(
-            "${PROJECT_SOURCE_DIR}/config-files/build/src/CMakeLists.txt.in"
-            "${PROJECT_BINARY_DIR}/${LIBRARY_NAME}/src/CMakeLists.txt"
             @ONLY
     )
 endif()
