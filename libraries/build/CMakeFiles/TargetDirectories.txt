@@ -1,0 +1,2 @@
+/mnt/c/Users/patri/OneDrive/Coding/CXX/libraries/build/CMakeFiles/edit_cache.dir
+/mnt/c/Users/patri/OneDrive/Coding/CXX/libraries/build/CMakeFiles/rebuild_cache.dir

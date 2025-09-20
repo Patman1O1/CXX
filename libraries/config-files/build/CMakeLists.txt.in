@@ -109,7 +109,7 @@ if(NOT @LIBRARY_TYPE@ STREQUAL "INTERFACE")
 endif()
 
 if(@LIBRARY_NAME_UPPER@_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
-    configure_package_config_file(cmake/mylib-config.cmake.in @LIBRARY_NAME@-config.cmake
+    configure_package_config_file(cmake/@LIBRARY_NAME@-config.cmake.in @LIBRARY_NAME@-config.cmake
             INSTALL_DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}")
 
     write_basic_package_version_file(@LIBRARY_NAME@-config-version.cmake
