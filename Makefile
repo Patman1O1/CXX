@@ -18,7 +18,6 @@
 # Install Clang
 # ===============================
 install-clang:
-
 	./scripts/pkg-mgr.sh install clangd
 
 # ===============================
@@ -44,7 +43,7 @@ uninstall-cmake:
 # ===============================
 # Install g++
 # ===============================
-install-g++: 
+install-g++:
 	./scripts/pkg-mgr.sh install g++
 
 # ===============================
