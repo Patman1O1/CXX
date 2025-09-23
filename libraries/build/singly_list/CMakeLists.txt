@@ -109,7 +109,7 @@ if(NOT INTERFACE STREQUAL "INTERFACE")
 endif()
 
 if(SINGLY_LIST_INSTALL AND NOT CMAKE_SKIP_INSTALL_RULES)
-    configure_package_config_file(cmake/mylib-config.cmake.in singly_list-config.cmake
+    configure_package_config_file(cmake/singly_list-config.cmake.in singly_list-config.cmake
             INSTALL_DESTINATION "${SINGLY_LIST_INSTALL_CMAKEDIR}")
 
     write_basic_package_version_file(singly_list-config-version.cmake

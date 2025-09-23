@@ -1,0 +1,5 @@
+#ifndef SINGLY_LIST_HPP
+#define SINGLY_LIST_HPP
+
+
+#endif // SINGLY_LIST_HPP
