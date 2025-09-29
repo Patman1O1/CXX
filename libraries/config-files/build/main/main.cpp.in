@@ -1,9 +1,0 @@
-#include <cstddef>
-
-#include "@LIBRARY_NAME@/@LIBRARY_NAME@.hpp"
-
-
-int main(int argc, char* argv[]) {
-
-    return 0;
-}

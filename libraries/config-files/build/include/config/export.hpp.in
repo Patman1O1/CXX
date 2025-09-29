@@ -1,7 +1,0 @@
-#pragma once
-
-#ifndef @LIBRARY_NAME_UPPER@_STATIC_DEFINE
-#  include <@LIBRARY_NAME@/export_shared.hpp>
-#else
-#  include <@LIBRARY_NAME@/export_static.hpp>
-#endif
