@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "red_black_tree",
+      "displayName": "red_black_tree",
+      "description": "Default preset",
+      "generator": "Unix Makefiles",
+      "vendor": {
+          "jetbrains.com/clion": {
+            "toolchain": "WSL"
+          }
+      },
+      "binaryDir": "${sourceDir}/build/red_black_tree",
+      "hidden": false,
+      "cacheVariables": {
+        "RED_BLACK_TREE_BUILD_TESTS": "ON",
+        "RED_BLACK_TREE_BUILD_EXAMPLES": "ON",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_BUILD_TYPE": "Default",
+        "CMAKE_MINIMUM_REQUIRED_VERSION": "3.15...4.0"
+      }
+    }
+
+  ],
+  "buildPresets": [
+    {
+        "name": "default",
+        "configurePreset": "red_black_tree",
+        "configuration": "Default",
+        "targets": ["all"]
+    }
+
+  ]
+}

@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "@LIBRARY_NAME@",
+      "displayName": "@LIBRARY_NAME@",
+      "description": "Default preset",
+      "generator": "Unix Makefiles",
+      "vendor": {
+          "jetbrains.com/clion": {
+            "toolchain": "WSL"
+          }
+      },
+      "binaryDir": "${sourceDir}/build/@LIBRARY_NAME@",
+      "hidden": false,
+      "cacheVariables": {
+        "@LIBRARY_NAME_UPPER@_BUILD_TESTS": "ON",
+        "@LIBRARY_NAME_UPPER@_BUILD_EXAMPLES": "ON",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_STANDARD": "@CMAKE_CXX_STANDARD@",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_BUILD_TYPE": "Default",
+        "CMAKE_MINIMUM_REQUIRED_VERSION": "@CMAKE_MINIMUM_REQUIRED_VERSION@"
+      }
+    }
+
+  ],
+  "buildPresets": [
+    {
+        "name": "default",
+        "configurePreset": "@LIBRARY_NAME@",
+        "configuration": "Default",
+        "targets": ["all"]
+    }
+
+  ]
+}

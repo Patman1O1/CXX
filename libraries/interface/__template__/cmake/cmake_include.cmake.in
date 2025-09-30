@@ -1,0 +1,25 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Variable Configuration
+#-----------------------------------------------------------------------------------------------------------------------
+# Set library variables
+set(LIBRARY_NAME "" CACHE STRING "LIBRARY_NAME") # Required
+
+set(LIBRARY_TYPE "" CACHE STRING "LIBRARY_TYPE \"\^(INTERFACE|STATIC|SHARED)\$\"") # Required
+string(TOUPPER "${LIBRARY_TYPE}" LIBRARY_TYPE)
+
+set(LIBRARY_DIR "${CMAKE_SOURCE_DIR}/libraries/${LIBRARY_TYPE}/${LIBRARY_NAME}" CACHE STRING "LIBRARY_DIR")
+
+# Fail the configuration process if the user does not specify a library name
+if (NOT LIBRARY_NAME)
+    message(FATAL_ERROR "-DLIBRARY_NAME was not specified")
+endif()
+
+# Fail the configuration process if the user does not specify a valid library type
+if (NOT LIBRARY_TYPE MATCHES "^(INTERFACE|STATIC|SHARED)$")
+    message(FATAL_ERROR "-DLIBRARY_TYPE was not specified as INTERFACE, STATIC, or SHARED")
+endif()
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Path Configuration
+#-----------------------------------------------------------------------------------------------------------------------

@@ -1,0 +1,149 @@
+#-----------------------------------------------------------------------------------------------------------------------
+# Information
+#-----------------------------------------------------------------------------------------------------------------------
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+project(@LIBRARY_NAME@
+        VERSION @LIBRARY_VERSION@
+        DESCRIPTION @LIBRARY_DESCRIPTION@
+        LANGUAGES CXX)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Includes
+#-----------------------------------------------------------------------------------------------------------------------
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+include(cmake/utils.cmake)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Settings and Options
+#-----------------------------------------------------------------------------------------------------------------------
+set(CMAKE_CXX_STANDARD @CMAKE_CXX_STANDARD@)
+
+string(COMPARE EQUAL "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}" is_top_level)
+
+option(BUILD_DOCS "Build @LIBRARY_NAME@ documentation" OFF)
+set_if_undefined(@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR "${CMAKE_INSTALL_LIBDIR}/cmake/@LIBRARY_NAME@" CACHE STRING
+    "Install path for @LIBRARY_NAME@ package-related CMake files")
+
+if(NOT DEFINED CMAKE_BUILD_TYPE AND NOT DEFINED CMAKE_CONFIGURATION_TYPES)
+    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+endif()
+
+set_if_undefined(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set_if_undefined(CMAKE_VISIBILITY_INLINES_HIDDEN ON)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Library Target
+#-----------------------------------------------------------------------------------------------------------------------
+add_library(@LIBRARY_NAME@ @LIBRARY_TYPE@) # initialized below
+add_library(@LIBRARY_NAMESPACE@::@LIBRARY_NAME@ ALIAS @LIBRARY_NAME@)
+
+set(SOURCES
+    include/@LIBRARY_NAME@/export.hpp
+    include/@LIBRARY_NAME@/@LIBRARY_NAME@.hpp
+    src/@LIBRARY_NAME@.cpp)
+
+source_group(TREE "${CMAKE_CURRENT_SOURCE_DIR}" FILES ${SOURCES})
+
+target_sources(@LIBRARY_NAME@ PRIVATE ${SOURCES})
+
+target_compile_definitions(@LIBRARY_NAME@
+    PUBLIC
+        @LIBRARY_NAME_UPPER@_STATIC_DEFINE)
+
+target_include_directories(@LIBRARY_NAME@
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>")
+
+set_target_properties(@LIBRARY_NAME@ PROPERTIES
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+    VERSION ${PROJECT_VERSION})
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Tests Target
+#-----------------------------------------------------------------------------------------------------------------------
+enable_testing()
+add_subdirectory(tests)
+add_test(NAME @LIBRARY_NAME@_tests COMMAND @LIBRARY_NAME@_tests)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Main Target
+#-----------------------------------------------------------------------------------------------------------------------
+add_subdirectory(main)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Documentation Target
+#-----------------------------------------------------------------------------------------------------------------------
+if(BUILD_DOCS)
+    find_package(Doxygen REQUIRED)
+    doxygen_add_docs(docs include)
+endif()
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Install Target
+#-----------------------------------------------------------------------------------------------------------------------
+configure_package_config_file(
+    cmake/@LIBRARY_NAME@-config.cmake.in
+    @LIBRARY_NAME@-config.cmake
+    INSTALL_DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}"
+)
+
+write_basic_package_version_file(
+    @LIBRARY_NAME@-config-version.cmake
+    COMPATIBILITY SameMajorVersion
+)
+
+install(TARGETS @LIBRARY_NAME@
+    EXPORT @LIBRARY_NAME@-export
+    ARCHIVE COMPONENT @LIBRARY_NAME@-dev
+    INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+)
+
+install(DIRECTORY include/
+    TYPE INCLUDE
+    COMPONENT @LIBRARY_NAME@-dev
+)
+
+install(EXPORT @LIBRARY_NAME@-export
+    COMPONENT @LIBRARY_NAME@-dev
+    FILE "@LIBRARY_NAME@-targets.cmake"
+    DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}"
+    NAMESPACE @LIBRARY_NAMESPACE@::
+)
+
+install(FILES
+    "${CMAKE_CURRENT_BINARY_DIR}/@LIBRARY_NAME@-config.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/@LIBRARY_NAME@-config-version.cmake"
+    COMPONENT @LIBRARY_NAME@-dev
+    DESTINATION "${@LIBRARY_NAME_UPPER@_INSTALL_CMAKEDIR}"
+)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Uninstall Target
+#-----------------------------------------------------------------------------------------------------------------------
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+    IMMEDIATE @ONLY
+)
+
+add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake
+)
+
+
+#-----------------------------------------------------------------------------------------------------------------------
+# Dependencies
+#-----------------------------------------------------------------------------------------------------------------------
+
+

@@ -1,0 +1,44 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "hash_table",
+      "displayName": "hash_table",
+      "description": "Default preset",
+      "generator": "Unix Makefiles",
+      "vendor": {
+          "jetbrains.com/clion": {
+            "toolchain": "WSL"
+          }
+      },
+      "binaryDir": "${sourceDir}/build/hash_table",
+      "hidden": false,
+      "cacheVariables": {
+        "HASH_TABLE_BUILD_TESTS": "ON",
+        "HASH_TABLE_BUILD_EXAMPLES": "ON",
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_STANDARD": "23",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_BUILD_TYPE": "Default",
+        "CMAKE_MINIMUM_REQUIRED_VERSION": "3.15...4.0"
+      }
+    }
+
+  ],
+  "buildPresets": [
+    {
+        "name": "default",
+        "configurePreset": "hash_table",
+        "configuration": "Default",
+        "targets": ["all"]
+    }
+
+  ]
+}
