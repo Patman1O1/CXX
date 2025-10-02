@@ -10,6 +10,11 @@ set(PROGRAM_SOURCE_DIR "${CMAKE_SOURCE_DIR}/programs/${PROGRAM_NAME}")
 set(PROGRAM_BINARY_DIR "${CMAKE_BINARY_DIR}/programs/${PROGRAM_NAME}/build/${PROGRAM_NAME}")
 set(TEMPLATE_DIR "${CMAKE_SOURCE_DIR}/programs/__template__")
 
+# Set CMake and C++ related variables
+set(CMAKE_VERSION 3.15...4.0)
+set(CMAKE_MINIMUM_REQUIRED_VERSION 3.15...4.0)
+set(CMAKE_CXX_STANDARD 23)
+
 # Make sure required arguments were specified
 if (NOT PROGRAM_NAME)
     message(FATAL_ERROR "-DPROGRAM_NAME was not specified")
