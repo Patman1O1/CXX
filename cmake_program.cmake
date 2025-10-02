@@ -1,15 +1,14 @@
 # Variables
 set(PROGRAM_NAME "" CACHE STRING "PROGRAM_NAME") # Required
 set(PROGRAM_NAME_UPPER "${PROGRAM_NAME}" CACHE STRING "PROGRAM_NAME_UPPER")
+string(TOUPPER "${PROGRAM_NAME_UPPER}" PROGRAM_NAME_UPPER)
 set(PROGRAM_NAME_LOWER "${PROGRAM_NAME}" CACHE STRING "PROGRAM_NAME_LOWER")
+string(TOLOWER "${PROGRAM_NAME_LOWER}" PROGRAM_NAME_LOWER)
 set(PROGRAM_DESCRIPTION "\"\"" CACHE STRING "PROGRAM_DESCRIPTION")
 set(PROGRAM_VERSION 1.0.0)
-
-
-# Variable Formatting
-string(TOUPPER "${PROGRAM_NAME_UPPER}" PROGRAM_NAME_UPPER)
-string(TOLOWER "${PROGRAM_NAME_LOWER}" PROGRAM_NAME_LOWER)
-
+set(PROGRAM_SOURCE_DIR "${CMAKE_SOURCE_DIR}/programs/${PROGRAM_NAME}")
+set(PROGRAM_BINARY_DIR "${CMAKE_BINARY_DIR}/programs/${PROGRAM_NAME}/build/${PROGRAM_NAME}")
+set(TEMPLATE_DIR "${CMAKE_SOURCE_DIR}/programs/__template__")
 
 # Make sure required arguments were specified
 if (NOT PROGRAM_NAME)
@@ -19,32 +18,36 @@ endif()
 
 # Configure ${PROGRAM_NAME}/src
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/src/main.cpp.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/src/main.cpp"
+        "${TEMPLATE_DIR}/src/main.cpp.in"
+        "${PROGRAM_SOURCE_DIR}/src/main.cpp"
         @ONLY
 )
 
 
 # Configure ${PROGRAM_NAME}
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/.clang-format.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/.clang-format"
+        "${TEMPLATE_DIR}/.clang-format.in"
+        "${PROGRAM_SOURCE_DIR}/.clang-format"
         @ONLY
 )
 
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/.gitignore.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/.gitignore"
+        "${TEMPLATE_DIR}/.gitignore.in"
+        "${PROGRAM_SOURCE_DIR}/.gitignore"
         @ONLY
 )
 
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/CMakeLists.txt.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/CMakeLists.txt"
+        "${TEMPLATE_DIR}/CMakeLists.txt.in"
+        "${PROGRAM_SOURCE_DIR}/CMakeLists.txt"
         @ONLY
 )
 
 configure_file(
-        "${PROJECT_SOURCE_DIR}/config-files/build/CMakePresets.json.in"
-        "${PROJECT_BINARY_DIR}/${PROGRAM_NAME}/CMakePresets.json"
+        "${TEMPLATE_DIR}/CMakePresets.json.in"
+        "${PROGRAM_SOURCE_DIR}/CMakePresets.json"
         @ONLY)
+
+
+# Configure ${PROGRAM_NAME}/include
+file(MAKE_DIRECTORY "${PROGRAM_SOURCE_DIR}/include")
