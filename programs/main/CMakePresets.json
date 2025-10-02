@@ -1,0 +1,42 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 14,
+    "patch": 0
+  },
+
+  "configurePresets": [
+    {
+      "name": "main",
+      "displayName": "main",
+      "description": "Default preset",
+      "generator": "Unix Makefiles",
+      "vendor": {
+          "jetbrains.com/clion": {
+            "toolchain": "WSL"
+          }
+      },
+      "binaryDir": "/mnt/c/Users/patri/OneDrive/Coding/CXX/programs/main/build/main",
+      "hidden": false,
+      "cacheVariables": {
+        "CMAKE_C_COMPILER": "clang",
+        "CMAKE_CXX_COMPILER": "clang++",
+        "CMAKE_CXX_STANDARD": "",
+        "CMAKE_CXX_STANDARD_REQUIRED": "ON",
+        "CMAKE_BUILD_TYPE": "Default",
+        "CMAKE_MINIMUM_REQUIRED_VERSION": ""
+      }
+    }
+
+  ],
+  "buildPresets": [
+    {
+        "name": "default",
+        "configurePreset": "main",
+        "configuration": "Default",
+        "targets": ["all"]
+    }
+
+  ]
+}
