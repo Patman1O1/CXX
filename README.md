@@ -1,0 +1,1 @@
+A hub for all my personal projects written in C++. Contains librarys (shared, static, and interface) and programs. A handful of libraries depend on each other so symbolic links are created to connect all of them without having to manually install each one.
